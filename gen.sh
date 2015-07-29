@@ -27,7 +27,7 @@ EOF
     fi
 done
 
-[ -z "$project" ] && echo "Usage $0 [-l|--list] [--no-attribute]... [--force-attribute]... project_name" >&2 && exit 1
+[ -z "$project" ] && echo "Usage $0 [-l|--list] [--no-flag]... [--force-flag]... project_name" >&2 && exit 1
 
 [ -d projects/$project ] || {
     cat <<EOF
