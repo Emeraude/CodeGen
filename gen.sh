@@ -189,10 +189,13 @@ for file in `ls -1 projects/$project/files`; do
 '
     for line in `cat projects/$project/files/$file`; do
 	if $(grep -q '^__codeGen__.*$' <<< "$line"); then
+	    IFS=$oldIFS;
 	    get_function_code $line projects/$project/files/$file >> target/$project/$file
 	else
 	    echo $line >> target/$project/$file
 	fi
+	IFS='
+'
     done
     IFS=$oldIFS
     add_tmp_include > /tmp/__codeGen_sortedInclude
