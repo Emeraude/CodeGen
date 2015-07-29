@@ -106,7 +106,7 @@ get_function_code() {
     elif [ -f sources/$1.c ]; then
 	get_function_from_file sources/$1.c
     else
-	echo "Unable to resolve symbol \`$1\`" >&2
+	echo "Unable to resolve symbol \`$1\` wanted in \"$(readlink -f $2)\"" >&2
 	exit 1
     fi
 }
@@ -172,7 +172,7 @@ for file in `ls -1 projects/$project/files`; do
 '
     for line in `cat projects/$project/files/$file`; do
 	if $(grep -q '^__codeGen__.*$' <<< "$line"); then
-	    get_function_code $line >> target/$project/$file
+	    get_function_code $line projects/$project/files/$file >> target/$project/$file
 	else
 	    echo $line >> target/$project/$file
 	fi
