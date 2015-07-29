@@ -9,6 +9,7 @@ used=''
 external=''
 tmp_includes=''
 includes=''
+> /tmp/__codeGen_functionsPrototypes
 > /tmp/__codeGen_functionsResolution
 
 for arg in $@; do
@@ -46,7 +47,7 @@ get_function_list_from_file() {
     for f in $forced; do
 	newFunctionList=$(grep " $f " <<< "$functionList")
 	if [ "$newFunctionList" == '' ]; then
-	    echo -e "\033[31m\`$f\` flag not found in ./sources/__codeGen__strlen.c. Flag \`--force-$f\` will be ignored\033[0m" >&2
+	    echo -e "\033[31m\`$f\` flag not found in \"$1\". Flag \`--force-$f\` will be ignored\033[0m" >&2
 	else
 	    functionList="$newFunctionList"
 	fi
@@ -55,7 +56,7 @@ get_function_list_from_file() {
     for r in $rejected; do
 	newFunctionList=$(grep -v " $r " <<< "$functionList")
 	if [ "$newFunctionList" == '' ]; then
-	    echo -e "\033[33mYou have suppressed too many flags for file ./sources/__codeGen__strlen.c. Flag \`--no-$r\` will be ignored\033[0m" >&2
+	    echo -e "\033[33mYou have suppressed too many flags for file \"$1\". Flag \`--no-$r\` will be ignored\033[0m" >&2
 	else
 	    functionList="$newFunctionList"
 	fi
@@ -86,6 +87,7 @@ get_function_from_file() {
     nextFunctionStartLine=$(tail -n $endOfFileLen $1 | grep -n '/\*.*function.*\*/' | head -n 1 | cut -d ':' -f1)
     functionPrototype=$(tail -n $endOfFileLen $1 | head -n 1)
     display_prototype "$functionPrototype"
+    display_prototype "$functionPrototype" >> /tmp/__codeGen_functionsPrototypes
     if [ -z "$nextFunctionStartLine" ]; then
 	tail -n $(($endOfFileLen - 1)) $1
     else
@@ -161,7 +163,22 @@ add_tmp_include() {
     for include in $(sort -u /tmp/__codeGen_tmpInclude); do
 	echo "#include <$include>"
     done
+    echo "#include \"$project.h\""
     rm -f /tmp/__codeGen_tmpInclude 2>&-
+}
+
+create_project_header() {
+    echo '#pragma once' > target/$project/$project.h
+    echo >> target/$project/$project.h
+    oldIFS=$IFS
+    IFS='
+'
+    for f in $(cat /tmp/__codeGen_functionsPrototypes); do
+	echo -n $f >> target/$project/$project.h
+	grep -q ';$' <<< "$f" || echo -n ';' >> target/$project/$project.h
+	echo >> target/$project/$project.h
+    done
+    IFS=$oldIFS;
 }
 
 for file in `ls -1 projects/$project/files`; do
@@ -196,6 +213,9 @@ for file in `ls -1 target/$project`; do
     IFS=$oldIFS
 done
 
+
+create_project_header
+
 display_used_flags
 display_external_functions
 display_used_includes
@@ -204,6 +224,6 @@ Generated project is in target/$project.
 Don't forget to test it !
 EOF
 
-rm -f /tmp/__codeGen_functionsResolution 2>&-
+rm -f /tmp/__codeGen_functionsResolution /tmp/__codeGen_functionsPrototypes 2>&-
 
 exit 0
