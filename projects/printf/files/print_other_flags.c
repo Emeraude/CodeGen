@@ -1,0 +1,7 @@
+__codeGen__print_int
+
+__codeGen__print_pointer
+
+__codeGen__print_char
+
+__codeGen__print_string

@@ -1,0 +1,5 @@
+__codeGen__putchar
+
+__codeGen__strlen
+
+__codeGen__putstr
