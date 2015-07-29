@@ -98,7 +98,6 @@ get_function_from_file() {
     }
     echo $(basename $1 | cut -d '.' -f1) $(get_function_name_from_prototype "$functionPrototype") >> /tmp/__codeGen_functionsResolution
     used+="$(head -n $rand <<< "$functionList" | tail -n 1 | cut -d ':' -f2 | cut -d '*' -f2)"
-    echo
 }
 
 get_function_code() {
@@ -168,9 +167,17 @@ add_tmp_include() {
 for file in `ls -1 projects/$project/files`; do
     > target/$project/$file
     tmp_includes=''
-    for line in `grep __codeGen__ projects/$project/files/$file`; do
-	get_function_code $line >> target/$project/$file
+    oldIFS=$IFS
+    IFS='
+'
+    for line in `cat projects/$project/files/$file`; do
+	if $(grep -q '^__codeGen__.*$' <<< "$line"); then
+	    get_function_code $line >> target/$project/$file
+	else
+	    echo $line >> target/$project/$file
+	fi
     done
+    IFS=$oldIFS
     add_tmp_include > /tmp/__codeGen_sortedInclude
     cat target/$project/$file >> /tmp/__codeGen_sortedInclude
     mv /tmp/__codeGen_sortedInclude target/$project/$file

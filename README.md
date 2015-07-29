@@ -28,7 +28,7 @@ If the function need some special include , they have to be specified in a comme
 ## CodeGen projects
 
 A project is divided in two directories:
-- *files*, that contain the project's files, with the prototypes of the function that will be replaced
+- *files*, that contain the project's files, with the names of the functions that will be replaced. It correspond to the the name of the file in **CodeGen** will search the sources. Only lines which start by **__codeGen__** will be replaced.
 - *sources*, that contain sources specific to the project. They use the same format as the CodeGen standard functions described above. If some sources of the CodeGen standard functions doesn't correspond to your project, you can replace them by putting your own ones in this directory.
 
 ### Author
