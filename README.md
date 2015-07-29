@@ -30,6 +30,7 @@ If the function need some special include , they have to be specified in a comme
 A project is divided in two directories:
 - *files*, that contain the project's files, with the names of the functions that will be replaced. It correspond to the the name of the file in **CodeGen** will search the sources. Only lines which start by **__codeGen__** will be replaced.
 - *sources*, that contain sources specific to the project. They use the same format as the CodeGen standard functions described above. If some sources of the CodeGen standard functions doesn't correspond to your project, you can replace them by putting your own ones in this directory.
+If the file *files/PROJECT.h* exists (with PROJECT as the name of the project), it will be used and the prototypes used in all the source file generated will be append to it.
 
 ### Author
 

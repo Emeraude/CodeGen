@@ -173,6 +173,7 @@ create_project_header() {
     oldIFS=$IFS
     IFS='
 '
+    [ -f projects/$project/files/$project.h ] && cat projects/$project/files/$project.h >> target/$project/$project.h
     for f in $(cat /tmp/__codeGen_functionsPrototypes); do
 	echo -n $f >> target/$project/$project.h
 	grep -q ';$' <<< "$f" || echo -n ';' >> target/$project/$project.h
