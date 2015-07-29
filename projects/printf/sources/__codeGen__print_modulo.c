@@ -1,6 +1,7 @@
 /* function */
 void	print_modulo(va_list *ap)
 {
+  (void)ap;
   __codeGen__putchar('%');
 }
 
@@ -19,5 +20,6 @@ void	print_modulo(va_list *const ap __attribute__ ((unused)))
 /* function const */
 void	print_modulo(va_list *const ap)
 {
+  (void)ap;
   __codeGen__putchar('%');
 }
