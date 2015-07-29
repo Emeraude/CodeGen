@@ -1,6 +1,6 @@
 # CodeGen
 
-CodeGen is a simple C code generator. It pick a random version of a function to build an unique project.
+CodeGen is a simple C code generator. It pick a random version of each function to build an unique project.
 
 ## Synopsis
 
