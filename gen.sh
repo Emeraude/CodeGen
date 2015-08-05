@@ -182,6 +182,30 @@ create_project_header() {
     IFS=$oldIFS;
 }
 
+load_plugins() {
+    oldIFS=$IFS
+    IFS='
+'
+    if [ -f projects/$project/PLUGINS ]; then
+	echo "Loading plugins"
+	for line in `cat projects/$project/PLUGINS`; do
+	    name=$(cut -d' ' -f1 <<< "$line")
+	    repo=$(cut -d' ' -f2 <<< "$line")
+	    mkdir -p plugins || exit 1
+	    [ -d "plugins/$name" ] && {
+		pushd plugins/$name && git pull
+		popd
+	    } || {
+		mkdir plugins/$name && pushd plugins/$name && git clone $repo .
+		popd
+	    }
+	done
+    fi
+    IFS=$oldIFS
+}
+
+load_plugins
+
 for file in `ls -1 projects/$project/files`; do
     > target/$project/$file
     tmp_includes=''
@@ -189,6 +213,10 @@ for file in `ls -1 projects/$project/files`; do
     IFS='
 '
     for line in `cat projects/$project/files/$file`; do
+	# if $(grep -q '^__codeGen_plugin_.*__.*$' <<< "$line"); then
+	#     IFS=$oldIFS;
+	#     get_function_code $line projects/$project/files/$file >> target/$project/$file
+	# el
 	if $(grep -q '^__codeGen__.*$' <<< "$line"); then
 	    IFS=$oldIFS;
 	    get_function_code $line projects/$project/files/$file >> target/$project/$file
